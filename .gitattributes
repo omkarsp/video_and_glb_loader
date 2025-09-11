@@ -1,0 +1,4 @@
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.bundle filter=lfs diff=lfs merge=lfs -text
+Assets/StreamingAssets/bundles/* filter=lfs diff=lfs merge=lfs -text
+Assets/_Assets/Videos/* filter=lfs diff=lfs merge=lfs -text
