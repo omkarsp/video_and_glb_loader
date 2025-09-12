@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AppConfig
   m_EditorClassIdentifier: 
   assetBundleFolder: bundles
-  videoFolder: videos
-  glbFolder: glbs
-  bundleName: videos
+  videoBundleName: videos
   videoClipName: Dance
+  glbBundleName: glbs
+  glbName: clock

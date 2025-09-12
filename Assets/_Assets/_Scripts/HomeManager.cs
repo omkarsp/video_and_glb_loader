@@ -4,6 +4,7 @@ public class HomeManager : MonoBehaviour
 {
 	public AppConfig appConfig;
 	public VideoBundleLoader project1Loader;
+	public GLBLoader project2Loader;
 	
 	public void OnProject1Clicked()
 	{
@@ -15,12 +16,19 @@ public class HomeManager : MonoBehaviour
 		
 	}
 
-	public void OnProject2Clicked()
+	public async void OnProject2Clicked()
 	{
 		GameManager.instance.ChangeGameState(GameState.Glb);
 		
-		var bundlePath = appConfig.GetActiveBundleGlbPath();
+		var bundlePath = appConfig.GetActiveGlbBundlePath();
 		var glbName = appConfig.GetActiveGlbName();
-		project1Loader.StartLoad(bundlePath, glbName);
+
+		// project2Loader.StartLoad(bundlePath, glbName);
+
+		var root = await project2Loader.LoadGlbFromBundle(bundlePath, glbName);
+		if (root != null)
+		{
+			root.transform.localPosition = Vector3.zero;
+		}
 	}
 }

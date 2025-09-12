@@ -21,7 +21,7 @@ public class AppConfig : ScriptableObject
 	// Convenience
 	public string GetActiveVideoBundlePath() => GetVideoBundlePath(videoBundleName);
 	public string GetActiveVideoClipName() => videoClipName;
-	public string GetActiveBundleGlbPath() => GetGlbBundlePath(glbBundleName);
+	public string GetActiveGlbBundlePath() => GetGlbBundlePath(glbBundleName);
 	public string GetActiveGlbName() => glbName;
 	
 }
