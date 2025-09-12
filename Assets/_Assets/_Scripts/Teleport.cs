@@ -47,13 +47,28 @@ public class Teleport : MonoBehaviour
             // Progress through states: text -> text+image -> teleport
             currentState++;
             UpdateUI();
+            
+            // If we just reached state 2 (text+image), immediately teleport
+            if (currentState == MAX_STATE)
+            {
+                // Move to next config and reset state
+                if (currentIndex < maxIndex)
+                {
+                    currentIndex++;
+                    currentState = 0;
+                    ResetToCurrentConfig();
+                }
+            }
         }
-        else if (currentIndex < maxIndex)
+        else
         {
-            // Move to next config and reset state
-            currentIndex++;
-            currentState = 0;
-            ResetToCurrentConfig();
+            // At state 2 (teleport), move to next config
+            if (currentIndex < maxIndex)
+            {
+                currentIndex++;
+                currentState = 0;
+                ResetToCurrentConfig();
+            }
         }
     }
 
@@ -67,12 +82,15 @@ public class Teleport : MonoBehaviour
             currentState--;
             UpdateUI();
         }
-        else if (currentIndex > 0)
+        else
         {
-            // Move to previous config and set to final state
-            currentIndex--;
-            currentState = MAX_STATE;
-            ResetToCurrentConfig();
+            // At state 0, move to previous config and show at final state
+            if (currentIndex > 0)
+            {
+                currentIndex--;
+                currentState = MAX_STATE;
+                ResetToCurrentConfig();
+            }
         }
     }
     
