@@ -84,11 +84,11 @@ public class Teleport : MonoBehaviour
         }
         else
         {
-            // At state 0, move to previous config and show at final state
+            // At state 0, move to previous config and show at state 1 (text+image)
             if (currentIndex > 0)
             {
                 currentIndex--;
-                currentState = MAX_STATE;
+                currentState = 1; // Set to state 1 so first click shows text only
                 ResetToCurrentConfig();
             }
         }
