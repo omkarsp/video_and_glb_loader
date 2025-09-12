@@ -31,4 +31,9 @@ public class HomeManager : MonoBehaviour
 			root.transform.localPosition = Vector3.zero;
 		}
 	}
+
+	public void Logout()
+	{
+		GameManager.instance.ChangeGameState(GameState.Login);
+	}
 }
