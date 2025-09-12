@@ -22,43 +22,64 @@ public class Teleport : MonoBehaviour
     
     int currentIndex = 0;
     int maxIndex = 0;
+    
+    // Progressive state system: 0=text only, 1=text+image, 2=teleport
+    int currentState = 0;
+    const int MAX_STATE = 2;
 
     private void Start()
     {
         maxIndex = descriptionConfigs.Count - 1;
         
-        nextButton.onClick.AddListener(TeleportToNext);
-        prevButton.onClick.AddListener(TeleportToPrev);
+        nextButton.onClick.AddListener(HandleNext);
+        prevButton.onClick.AddListener(HandlePrev);
         
-        // Move to initial position
-        UpdateUI();
-        MoveToCurrentPosition();
+        // Initialize with first config
+        ResetToCurrentConfig();
     }
 
-    public void TeleportToNext()
+    public void HandleNext()
     {
-        if (currentIndex < maxIndex && !IsTransitioning())
+        if (IsTransitioning()) return;
+        
+        if (currentState < MAX_STATE)
         {
-            currentIndex++;
-            MoveToCurrentPosition();
+            // Progress through states: text -> text+image -> teleport
+            currentState++;
             UpdateUI();
+        }
+        else if (currentIndex < maxIndex)
+        {
+            // Move to next config and reset state
+            currentIndex++;
+            currentState = 0;
+            ResetToCurrentConfig();
         }
     }
 
-    public void TeleportToPrev()
+    public void HandlePrev()
     {
-        if (currentIndex > 0 && !IsTransitioning())
+        if (IsTransitioning()) return;
+        
+        if (currentState > 0)
         {
-            currentIndex--;
-            MoveToCurrentPosition();
+            // Go back through states
+            currentState--;
             UpdateUI();
+        }
+        else if (currentIndex > 0)
+        {
+            // Move to previous config and set to final state
+            currentIndex--;
+            currentState = MAX_STATE;
+            ResetToCurrentConfig();
         }
     }
     
-    private void MoveToCurrentPosition()
+    private void ResetToCurrentConfig()
     {
-        // Move the canvas/object to the new location
-        if (descriptionConfigs[currentIndex].location != null)
+        // Move to the current config's location and update UI
+        if (descriptionConfigs[currentIndex] != null && descriptionConfigs[currentIndex].location != null)
         {
             Vector3 targetPosition = descriptionConfigs[currentIndex].location.position;
             transform.position = targetPosition;
@@ -69,6 +90,8 @@ public class Teleport : MonoBehaviour
                 cameraMovementManager.MoveCameraToPosition(targetPosition, cameraOffset);
             }
         }
+        
+        UpdateUI();
     }
     
     private void UpdateUI()
@@ -77,13 +100,32 @@ public class Teleport : MonoBehaviour
         {
             var config = descriptionConfigs[currentIndex];
             
+            // Always show title
             if (title != null) title.text = config.title;
-            if (description != null) description.text = config.description;
-            if (image != null && config.subjectImage != null) image.sprite = config.subjectImage;
+            
+            // Show description based on state
+            if (description != null) 
+            {
+                description.text = currentState >= 0 ? config.description : "";
+            }
+            
+            // Show image based on state
+            if (image != null) 
+            {
+                image.gameObject.SetActive(currentState >= 1);
+                if (currentState >= 1 && config.subjectImage != null) 
+                {
+                    image.sprite = config.subjectImage;
+                }
+            }
         }
         
-        nextButton.interactable = currentIndex < maxIndex;
-        prevButton.interactable = currentIndex > 0;
+        // Update button states
+        bool canGoNext = (currentState < MAX_STATE) || (currentIndex < maxIndex);
+        bool canGoPrev = (currentState > 0) || (currentIndex > 0);
+        
+        nextButton.interactable = canGoNext;
+        prevButton.interactable = canGoPrev;
     }
     
     private bool IsTransitioning()
@@ -93,7 +135,7 @@ public class Teleport : MonoBehaviour
 
     private void OnDestroy()
     {
-        nextButton.onClick.RemoveListener(TeleportToNext);
-        prevButton.onClick.RemoveListener(TeleportToPrev);
+        nextButton.onClick.RemoveListener(HandleNext);
+        prevButton.onClick.RemoveListener(HandlePrev);
     }
 }
