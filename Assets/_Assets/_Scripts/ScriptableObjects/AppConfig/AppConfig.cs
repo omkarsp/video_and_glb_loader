@@ -6,18 +6,22 @@ public class AppConfig : ScriptableObject
 {
 	[Header("Folder Paths")]
 	public string assetBundleFolder = "bundles";
-	public string videoFolder = "videos";
-	public string glbFolder = "glbs";
 
 	[Header("Active Video")]
-	public string bundleName = "videoprefabsbundle";
+	public string videoBundleName = "videos";
 	public string videoClipName = "VideoClip";
+	
+	[Header("GLBs")]
+	public string glbBundleName = "glbs";
+	public string glbName = "GLB";
 
-	public string GetAssetBundlePath(string bundle) => Path.Combine(Application.streamingAssetsPath, assetBundleFolder, bundle);
-	public string GetVideoPath(string videoName) => Path.Combine(Application.streamingAssetsPath, videoFolder, videoName);
-	public string GetGlbPath(string glbName) => Path.Combine(Application.streamingAssetsPath, glbFolder, glbName);
+	public string GetVideoBundlePath(string bundle) => Path.Combine(Application.streamingAssetsPath, assetBundleFolder, bundle);
+	public string GetGlbBundlePath(string bundle) => Path.Combine(Application.streamingAssetsPath, assetBundleFolder, bundle);
 
 	// Convenience
-	public string GetActiveBundlePath() => GetAssetBundlePath(bundleName);
+	public string GetActiveVideoBundlePath() => GetVideoBundlePath(videoBundleName);
 	public string GetActiveVideoClipName() => videoClipName;
+	public string GetActiveBundleGlbPath() => GetGlbBundlePath(glbBundleName);
+	public string GetActiveGlbName() => glbName;
+	
 }

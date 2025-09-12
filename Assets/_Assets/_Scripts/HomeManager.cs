@@ -9,7 +9,7 @@ public class HomeManager : MonoBehaviour
 	{
 		GameManager.instance.ChangeGameState(GameState.Video);
 		
-		var bundlePath = appConfig.GetActiveBundlePath();
+		var bundlePath = appConfig.GetActiveVideoBundlePath();
 		var clipName = appConfig.GetActiveVideoClipName();
 		project1Loader.StartLoad(bundlePath, clipName);
 		
@@ -18,5 +18,9 @@ public class HomeManager : MonoBehaviour
 	public void OnProject2Clicked()
 	{
 		GameManager.instance.ChangeGameState(GameState.Glb);
+		
+		var bundlePath = appConfig.GetActiveBundleGlbPath();
+		var glbName = appConfig.GetActiveGlbName();
+		project1Loader.StartLoad(bundlePath, glbName);
 	}
 }
