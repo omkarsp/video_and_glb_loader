@@ -25,7 +25,7 @@ public class LoginUI : MonoBehaviour
         if (AccountManager.Login(u, p))
         {
             feedbackText.text = "Login successful.";
-            SceneManager.LoadScene(homeSceneName);
+            GameManager.instance.ChangeGameState(GameState.Home);
         }
         else
         {
@@ -52,7 +52,7 @@ public class LoginUI : MonoBehaviour
         if (AccountManager.SignUp(u, p))
         {
             feedbackText.text = "Account created. Logging in...";
-            SceneManager.LoadScene(homeSceneName);
+            GameManager.instance.ChangeGameState(GameState.Home);
         }
         else
         {

@@ -8,6 +8,7 @@ public class VideoControls : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button pauseButton;
     [SerializeField] private Button stopButton;
+    [SerializeField] private Button backButton;
     [SerializeField] private VideoPlayer videoPlayer;
 
     private void Awake()
@@ -21,6 +22,7 @@ public class VideoControls : MonoBehaviour
         if (playButton != null)  playButton.onClick.AddListener(OnPlayClicked);
         if (pauseButton != null) pauseButton.onClick.AddListener(OnPauseClicked);
         if (stopButton != null)  stopButton.onClick.AddListener(OnStopClicked);
+        if (backButton != null) backButton.onClick.AddListener(OnBackClicked);
     }
 
     private void OnDisable()
@@ -28,6 +30,7 @@ public class VideoControls : MonoBehaviour
         if (playButton != null)  playButton.onClick.RemoveListener(OnPlayClicked);
         if (pauseButton != null) pauseButton.onClick.RemoveListener(OnPauseClicked);
         if (stopButton != null)  stopButton.onClick.RemoveListener(OnStopClicked);
+        if (backButton != null) backButton.onClick.RemoveListener(OnBackClicked);
     }
 
     private void OnPlayClicked()
@@ -43,5 +46,11 @@ public class VideoControls : MonoBehaviour
     private void OnStopClicked()
     {
         if (videoPlayer) videoPlayer.Stop();
+    }
+    
+    private void OnBackClicked()
+    {
+        if (videoPlayer) videoPlayer.Stop();
+        GameManager.instance.ChangeGameState(GameState.Home);
     }
 }
