@@ -79,4 +79,9 @@ public class GameManager : MonoBehaviour
     }
     
     public GameState GetCurrentGameState() => currentGameState;
+
+    public void QuitApplication()
+    {
+        Application.Quit();
+    }
 }
