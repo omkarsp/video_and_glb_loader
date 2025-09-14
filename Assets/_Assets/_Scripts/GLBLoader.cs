@@ -28,7 +28,6 @@ public class GLBLoader : MonoBehaviour
 			return null;
 		}
 		
-		Debug.Log("Bundle contains assets:\n" + string.Join("\n", _bundle.GetAllAssetNames()));
 
 		var parentTx = parent != null ? parent : transform;
 

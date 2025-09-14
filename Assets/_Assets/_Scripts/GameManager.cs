@@ -65,10 +65,9 @@ public class GameManager : MonoBehaviour
             case GameState.Video:
             case GameState.Glb:
                 ActivateScreen(currentGameState);
-                Debug.Log("Game State Changed to: " + currentGameState);
                 break;
             default:
-                Debug.Log("Game state is wrong");
+                Debug.LogError("Invalid game state: " + currentGameState);
                 break;
         }
     }

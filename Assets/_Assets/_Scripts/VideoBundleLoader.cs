@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Video;
@@ -8,7 +9,7 @@ public class VideoBundleLoader : MonoBehaviour
     string videoClipNameInBundle = "VideoClip";
     VideoPlayer videoPlayer;
     AssetBundle loadedBundle;
-    VideoClip currentVideoClip;
+    string currentVideoPath;
 
     private void Awake()
     {
@@ -23,7 +24,6 @@ public class VideoBundleLoader : MonoBehaviour
         StartCoroutine(LoadBundleCoroutine(bundleAbsolutePath));
     }
 
-    // Overload for when videoClipName is already set
     public void StartLoad(string bundleAbsolutePath)
     {
         StartCoroutine(LoadBundleCoroutine(bundleAbsolutePath));
@@ -31,7 +31,6 @@ public class VideoBundleLoader : MonoBehaviour
 
     private IEnumerator LoadBundleCoroutine(string bundlePath)
     {
-        // Unload previous bundle if exists
         if (loadedBundle != null)
         {
             loadedBundle.Unload(true);
@@ -61,7 +60,6 @@ public class VideoBundleLoader : MonoBehaviour
             yield break;
         }
 
-        // Try to find the clip inside the bundle
         yield return StartCoroutine(LoadVideoFromBundle(loadedBundle));
     }
 
@@ -82,48 +80,60 @@ public class VideoBundleLoader : MonoBehaviour
 
         if (match == null)
         {
-            Debug.LogError("VideoClip not found. Available assets:\n" + string.Join("\n", names));
+            Debug.LogError("Video not found. Assets in bundle:\n" + string.Join("\n", names));
             yield break;
         }
 
-        var clipLoad = bundle.LoadAssetAsync<VideoClip>(match);
+        // Load as TextAsset
+        var clipLoad = bundle.LoadAssetAsync<TextAsset>(match);
         yield return clipLoad;
 
-        VideoClip videoClip = clipLoad.asset as VideoClip;
-        if (videoClip == null)
+        var textAsset = clipLoad.asset as TextAsset;
+        if (textAsset == null)
         {
-            Debug.LogError("Found asset but it’s not a VideoClip: " + match);
-            bundle.Unload(false);
+            Debug.LogError("Found asset but not a TextAsset: " + match);
             yield break;
         }
 
-        videoPlayer.clip = videoClip;
-        currentVideoClip = videoClip;
+        // Normalize filename (remove .bytes/.mp4.bytes)
+        string cleanName = Path.GetFileNameWithoutExtension(match); // removes last extension
+        if (cleanName.EndsWith(".mp4")) // handles .mp4.bytes case
+            cleanName = Path.GetFileNameWithoutExtension(cleanName);
 
-        Debug.Log("VideoClip loaded successfully: " + videoClip.name);
+        string tempPath = Path.Combine(Application.persistentDataPath, cleanName + ".mp4");
+        File.WriteAllBytes(tempPath, textAsset.bytes);
+
+        // Play from file
+        videoPlayer.source = VideoSource.Url;
+        videoPlayer.url = tempPath;
+        videoPlayer.Prepare();
+
+        currentVideoPath = tempPath;
+
     }
 
-    // Call this when you want to unload the bundle and clear the video clip
     public void UnloadAndCleanup()
     {
         if (videoPlayer != null)
         {
+            videoPlayer.Stop();
             videoPlayer.clip = null;
+            videoPlayer.url = null;
         }
 
         if (loadedBundle != null)
         {
-            loadedBundle.Unload(true); // unload all loaded assets
+            loadedBundle.Unload(true);
             loadedBundle = null;
         }
 
-        currentVideoClip = null;
-        Debug.Log("Bundle unloaded and video cleared");
+        if (!string.IsNullOrEmpty(currentVideoPath) && File.Exists(currentVideoPath))
+        {
+            File.Delete(currentVideoPath);
+        }
+
+        currentVideoPath = null;
     }
 
-    // Optional: Get reference to current video clip
-    public VideoClip GetCurrentVideoClip() => currentVideoClip;
-
-    // Optional: Check if video is loaded and ready
-    public bool IsVideoLoaded() => videoPlayer != null && videoPlayer.clip != null;
+    public bool IsVideoLoaded() => videoPlayer != null && !string.IsNullOrEmpty(videoPlayer.url);
 }
