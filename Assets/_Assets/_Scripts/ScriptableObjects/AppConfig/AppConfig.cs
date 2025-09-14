@@ -9,11 +9,11 @@ public class AppConfig : ScriptableObject
 
 	[Header("Active Video")]
 	public string videoBundleName = "videos";
-	public string videoClipName = "VideoClip";
+	public string videoClipName = "Dance";
 	
 	[Header("GLBs")]
 	public string glbBundleName = "glbs";
-	public string glbName = "GLB";
+	public string glbName = "F-16D";
 
 	public string GetVideoBundlePath(string bundle) => Path.Combine(Application.streamingAssetsPath, assetBundleFolder, bundle);
 	public string GetGlbBundlePath(string bundle) => Path.Combine(Application.streamingAssetsPath, assetBundleFolder, bundle);

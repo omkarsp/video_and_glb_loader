@@ -20,21 +20,15 @@ public class GLBLoader : MonoBehaviour
 	{
 		Clear();
 
-		if (string.IsNullOrEmpty(bundlePath) || !File.Exists(bundlePath))
-		{
-			Debug.LogError($"GLBLoader: Invalid bundle path: {bundlePath}");
-			return null;
-		}
+		_bundle = await AssetBundleHelper.LoadBundleAsync(bundlePath);
 
-		var abRequest = AssetBundle.LoadFromFileAsync(bundlePath);
-		await abRequest;
-
-		_bundle = abRequest.assetBundle;
 		if (_bundle == null)
 		{
-			Debug.LogError($"GLBLoader: Failed to load AssetBundle at path: {bundlePath}");
+			Debug.LogError($"GLBLoader: Failed to load AssetBundle at {bundlePath}");
 			return null;
 		}
+		
+		Debug.Log("Bundle contains assets:\n" + string.Join("\n", _bundle.GetAllAssetNames()));
 
 		var parentTx = parent != null ? parent : transform;
 
